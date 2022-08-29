@@ -1,0 +1,50 @@
+server:
+  port: 1111
+
+
+
+jwt:
+  secret: secretkey123
+
+
+spring:
+  main:
+    allow-bean-definition-overriding: true
+    web-application-type: reactive
+  application:
+    name: getwap-api
+  cloud:
+    gateway:
+      routes:
+        - id: EMPLOYEE-API
+          uri: lb://EMPLOYEE-API
+          predicates:
+            - Path=/employee/**
+        #          filters:
+        #            - name: CircuitBreaker
+        #              args:
+        #                name: EMPLOYEE-API
+        #                falbackuri: forward:/employeeServiceFallback
+        - id: DEPARTMENT-API
+          uri: lb://DEPARTMENT-API
+          predicates:
+            - Path=/department/**
+#          filters:
+#            - name: CircuitBreaker
+#              args: DEPARTMENT-API
+#              falbackuri: forward:/departmentServiceFallback
+management:
+  endpoint:
+    web:
+      exposure:
+        include: hyxtrix.stream
+
+
+eureka:
+  client:
+    register-with-eureka: true
+    fetch-registry: true
+    service-url:
+      defaultZone: http://localhost:8761/eureka/
+  instance:
+    hostname: localhost
